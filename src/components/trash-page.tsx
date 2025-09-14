@@ -30,7 +30,7 @@ export default function TrashPage() {
       const res = await api.put(`/api/files/restore/${id}`);
       if (res.status === 200) {
         toast.success("File restored successfully");
-        fetchFiles(); // refresh list
+        fetchFiles();
       } else {
         toast.error("Restore failed");
       }

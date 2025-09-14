@@ -22,7 +22,6 @@ export function buildFileTree(files: File[]) {
   return tree;
 }
 
-// helper to drill into tree by path
 export function getNodeAtPath(tree: any, path: string[]) {
   let current = tree;
   for (const segment of path) {

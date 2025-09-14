@@ -1,4 +1,3 @@
-// src/components/share-modal.tsx
 "use client";
 
 import { useCallback, useEffect, useState } from "react";

@@ -1,4 +1,3 @@
-// src/components/upload-modal.tsx
 "use client";
 
 import { useState } from "react";
@@ -30,10 +29,8 @@ export default function UploadModal({ open, onClose }: UploadModalProps) {
 
   const finalizeUpload = async (fileId: string) => {
     try {
-      //await api.Post?. // placeholder to avoid TS error in some setups
       await api.post(`/api/files/${fileId}/finalize`);
     } catch (err) {
-      // ignore
       console.error(err)
     }
   };
@@ -41,13 +38,11 @@ export default function UploadModal({ open, onClose }: UploadModalProps) {
   const handleUpload = async () => {
     if (!file) return alert("Select a file first");
     try {
-      // Build target file path
       const folder = (overridePath || currentPath || "/").replace(/^\//, "").replace(/\/$/, "");
       const filename = file.name;
       const filePath = folder ? `${folder}/${filename}` : filename;
 
       if (isEncrypted) {
-        // encrypted: send multipart to backend (backend will encrypt & upload)
         const fd = new FormData();
         fd.append("file", file);
         fd.append("file_path", filePath);
@@ -60,7 +55,6 @@ export default function UploadModal({ open, onClose }: UploadModalProps) {
         return;
       }
 
-      // presigned flow: 1) request presigned put 2) PUT file to presigned URL 3) finalize
       const resp = await api.post("/api/files/presigned", {
         file_path: filePath,
         size: file.size,
@@ -68,14 +62,12 @@ export default function UploadModal({ open, onClose }: UploadModalProps) {
       const uploadUrl = resp.data.upload_url;
       const fileId = resp.data.file_id;
 
-      // Use axios (raw) to PUT binary to presigned URL (no auth)
       await axios.put(uploadUrl, file, {
         headers: {
           "Content-Type": file.type || "application/octet-stream",
         },
       });
 
-      // finalize
       finalizeUpload(fileId);
       await fetchFiles();
       onClose();
